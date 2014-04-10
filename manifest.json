@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "TiltScroll",
-    "description": "Tilt scroller is demo extension for Kitt. The purpose of this extension is to allow scroll current page only by rotation of mobile phone.",
+    "description": "TiltScroll uses your phone's accelerometer to let you scroll webpages just by tilting the phone.",
     "version": "1.3.9",
     "author": "Jan Dědeček",
     "icons": {
