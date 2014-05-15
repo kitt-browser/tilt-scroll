@@ -1,5 +1,3 @@
-var localJQuery = $.noConflict(true);
-(function($) {
     // The rotation of mobile phone is represented by three angles.
     // For convinience, I use coordinate system instead of rotation angles.
     // In theory, Y axis should be orthogonal on plane of mobile screen.
@@ -123,13 +121,13 @@ var localJQuery = $.noConflict(true);
 
         } else {
             // Set timer to control scrolling
+
             interval = window.setInterval(function() {
                 var c = Math.cos(window.orientation / 180 * Math.PI), s = Math.sin(window.orientation / 180 * Math.PI);
                 var x = getDX(), y = getDY();
                 // Rotate movement acording to orientation
                 var X = +c * x + s * y;
                 var Y = -s * x + c * y;
-
                 $(window).scrollTop($(window).scrollTop() + Y * MOTION_SPEED);
                 $(window).scrollLeft($(window).scrollLeft() + X * MOTION_SPEED);
             }, 30);
@@ -155,4 +153,3 @@ var localJQuery = $.noConflict(true);
                 break;
         }
     });
-})(localJQuery);
