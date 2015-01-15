@@ -13,6 +13,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-bumpup');
   grunt.loadNpmTasks('grunt-crx');
   grunt.loadNpmTasks('grunt-s3');
+  grunt.loadNpmTasks('grunt-typescript');
 
   // Read extension manifest
   var manifest = grunt.file.readJSON('manifest.json');
@@ -43,16 +44,18 @@ module.exports = function(grunt) {
 
   // Grunt config
   grunt.initConfig({
-    jshint: {
-      options: {
-        undef: true,
-        unused: false,
-        globals: {
-          'document': false, 'console': false, 'alert': false, 'chrome': false,
-          'module': false, 'process': false, 'window': false, '$': false
+    typescript: {
+      base: {
+        src: ['js/**/*.ts'],
+        dest: BUILD,
+        options: {
+          module: 'commonjs', //or commonjs
+          target: 'es3', //or es3
+          sourceMap: false,
+          declaration: false,
+          noImplicitAny: false
         }
-      },
-      files: [js]
+      }
     },
     bumpup: {
       setters: {
@@ -109,7 +112,6 @@ module.exports = function(grunt) {
         privateKey: BUILD+'/../key.pem'
       }
     },
-
     s3: {
       options: {
         key: process.env.S3_KEY,
@@ -139,7 +141,7 @@ module.exports = function(grunt) {
     grunt.registerTask('_usemin', ['useminPrepare', 'concat', 'usemin']);
   }
 
-  grunt.registerTask('default', ['jshint', 'bumpup', 'exec:bower', 'copy', '_usemin', 'crx']);
+  grunt.registerTask('default', ['typescript', 'bumpup', 'exec:bower', 'copy', '_usemin', 'crx']);
 
   grunt.registerTask('upload', function() {
     if ( ! process.env.S3_FOLDER ) {

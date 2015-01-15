@@ -1,3 +1,10 @@
+/// <reference path='../typings/jquery/jquery.d.ts'/>
+/// <reference path='../typings/chrome/chrome.d.ts'/>
+
+var _jQuery = $.noConflict(true);
+
+(function ($) {
+
     // The rotation of mobile phone is represented by three angles.
     // For convinience, I use coordinate system instead of rotation angles.
     // In theory, Y axis should be orthogonal on plane of mobile screen.
@@ -98,11 +105,11 @@
         current[2][2] = a * c;
     }, true);
 
-    var lastOrientation = window.orientation;
+    var lastOrientation = window['orientation'];
 
     // Register event handler
     window.addEventListener('orientationchange', function(event) {
-        var a = (window.orientation - lastOrientation) / 180 * Math.PI;
+        var a = (window['orientation'] - lastOrientation) / 180 * Math.PI;
         var c = Math.cos(a), s = Math.sin(a);
         for (var i = 0; i < 3; i++) {
             // Rotate coordinate system acording to orientation
@@ -110,7 +117,7 @@
             base[0][i] = +c * x + s * y;
             base[1][i] = -s * x + c * y;
         }
-        lastOrientation = window.orientation;
+        lastOrientation = window['orientation'];
     });
 
 
@@ -123,7 +130,7 @@
             // Set timer to control scrolling
 
             interval = window.setInterval(function() {
-                var c = Math.cos(window.orientation / 180 * Math.PI), s = Math.sin(window.orientation / 180 * Math.PI);
+                var c = Math.cos(window['orientation'] / 180 * Math.PI), s = Math.sin(window['orientation'] / 180 * Math.PI);
                 var x = getDX(), y = getDY();
                 // Rotate movement acording to orientation
                 var X = +c * x + s * y;
@@ -139,17 +146,25 @@
 
     }
 
+    var locked = false;
+
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
     {
         switch (request.cmd)
         {
             // Received on click event
-            case 'content.onClick':
-                browserActionOnClick(request.lock);
-                sendResponse({message: 'OK'});
+          case 'content.onClick':
+                locked = !locked;
+                browserActionOnClick(locked);
+                sendResponse({message: 'OK', isLocked: locked});
+                break;
+            case 'content.getLockStatus':
+                sendResponse({message: 'OK', isLocked: locked});
                 break;
             default:
                 sendResponse({message: 'Invalid arguments'});
                 break;
         }
     });
+
+})(_jQuery);
